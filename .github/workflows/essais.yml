@@ -1,0 +1,53 @@
+# Les essais sur une machine de GitHub : À LA DEMANDE SEULEMENT.
+#
+# Ce flux ne se déclenche ni à un envoi, ni à une demande de fusion, ni à la pose d'une étiquette : il
+# se lance à la main, depuis l'onglet « Actions ». Il ne publie rien et n'a que le droit de lire le dépôt.
+name: Essais à la demande
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  essais:
+    name: Essais sous Windows, Python 3.12
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Prendre le dépôt, avec tout son historique
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Installer ce que l'outil emploie
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
+
+      - name: Lecture, pont, écran, réglages et gardes d'export
+        run: python -B essais/essais.py
+
+      - name: Pièces tordues
+        run: python -B essais/essais_tordus.py
+
+      - name: Ce qui cache un texte, et ce qui y ressemble sans le cacher
+        run: python -B essais/essais_caches.py
+
+      - name: Exports OpenDocument
+        run: python -B essais/essais_exports.py
+
+      - name: Fenêtre cachée, pilotée par son pont
+        run: python -B essais/essais.py --fenetre
+
+      # La liste des chaînes interdites vit hors du dépôt : ici, seules les règles génériques sont appliquées.
+      - name: Contrôle de publication du dépôt, règles génériques
+        run: python -B essais/controle_publication.py --sans-liste

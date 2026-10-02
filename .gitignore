@@ -1,0 +1,17 @@
+# Ce que la construction et les essais posent sur le poste, et qui ne se publie jamais.
+_construction_locale/
+build/
+dist/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Aucun PDF dans le dépôt, sauf les cinq exemples fabriqués par essais/pieces_epreuve.py.
+# Les essais fabriquent les leurs dans un dossier temporaire.
+*.pdf
+*.PDF
+!exemples/**/*.pdf
+
+# Les réglages de l'utilisateur vivent sous son dossier de données locales, jamais ici.
+reglages*.json

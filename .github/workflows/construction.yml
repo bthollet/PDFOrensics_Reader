@@ -1,0 +1,83 @@
+# La construction de l'exécutable sur une machine de GitHub : À LA DEMANDE SEULEMENT.
+#
+# Ce flux ne se déclenche ni à un envoi, ni à la pose d'une étiquette. Il ne publie rien et n'a que le
+# droit de lire le dépôt : il joue les essais, construit l'exécutable, le contrôle, et le dépose comme
+# pièce du passage, gardée sept jours.
+#
+# L'exécutable d'une release n'est pas celui-ci. Une release se prépare à la main : une personne
+# construit l'exécutable depuis le dépôt à l'étiquette de la version, le contrôle
+# (essais/controle_publication.py --executable), puis le joint elle-même.
+name: Construction à la demande
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  construire:
+    name: Essais, construction et contrôle de l'exécutable
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      PYTHONUTF8: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      DEPOT: ${{ github.server_url }}/${{ github.repository }}
+    steps:
+      - name: Prendre le dépôt, avec tout son historique
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Installer ce que l'outil emploie, et de quoi construire
+        run: python -m pip install --disable-pip-version-check -r packaging/requirements-construction.txt
+
+      - name: Lecture, pont, écran, réglages et gardes d'export
+        run: python -B essais/essais.py
+
+      - name: Pièces tordues
+        run: python -B essais/essais_tordus.py
+
+      - name: Ce qui cache un texte, et ce qui y ressemble sans le cacher
+        run: python -B essais/essais_caches.py
+
+      - name: Exports OpenDocument
+        run: python -B essais/essais_exports.py
+
+      - name: Fenêtre cachée, pilotée par son pont
+        run: python -B essais/essais.py --fenetre
+
+      # La liste des chaînes interdites vit hors du dépôt : ici, seules les règles génériques sont appliquées.
+      - name: Contrôle de publication du dépôt, règles génériques
+        run: python -B essais/controle_publication.py --sans-liste
+
+      - name: Construire l'exécutable
+        run: python -B packaging/construire.py
+
+      - name: Essayer l'exécutable construit, fenêtre cachée
+        run: python -B essais/essais.py --executable _construction_locale/dist/PDForensics.exe
+
+      # La machine qui construit est une machine de service : ses noms ne sont ceux de personne (--poste-neutre).
+      - name: Contrôler l'exécutable - PDF, réglages, chemins inscrits dans les modules
+        run: python -B essais/controle_publication.py --sans-liste --executable _construction_locale/dist/PDForensics.exe --poste-neutre
+
+      - name: Rassembler ce qui accompagne l'exécutable
+        run: python -B packaging/preparer_release.py
+
+      - name: Contrôler le zip des exemples
+        run: python -B essais/controle_publication.py --sans-liste --exemples _construction_locale/release/PDForensics-exemples.zip --poste-neutre
+
+      - name: Déposer l'exécutable et ce qui l'accompagne comme pièce du passage
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: PDForensics-construction
+          path: _construction_locale/release/
+          if-no-files-found: error
+          retention-days: 7

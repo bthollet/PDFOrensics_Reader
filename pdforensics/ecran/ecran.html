@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDForensics</title>
+<style>
+/*STYLE*/
+</style>
+</head>
+<body>
+<div class="cadre">
+  <div class="bandeau"><strong>PDForensics</strong> <small>· ce que vous ouvrez est lu sur ce poste et n'en sort pas</small></div>
+  <div class="coque" id="coque" data-volet="src">
+    <aside class="volet" aria-label="Explorateurs">
+      <div class="glissiere">
+        <div class="rail">
+          <section class="panneau" id="exp-pieces" aria-label="Explorateur des pièces">
+            <div class="exp-tete"><h2>Pièces</h2></div>
+            <div class="exp-chemin"><input id="chemin-src" aria-label="Dossier affiché" spellcheck="false"><button type="button" class="petit" id="parcourir-src" title="Choisir un dossier">…</button></div>
+            <div class="raccourcis" id="raccourcis-src"></div>
+            <div class="liste" id="liste-src"></div>
+            <div class="exp-pied">
+              <div class="ligne"><button type="button" class="petit" id="tout">Tout sélectionner</button><span id="selection"></span><button type="button" class="lien" id="vider" hidden>Vider la sélection</button></div>
+            </div>
+          </section>
+          <section class="panneau" id="exp-export" aria-label="Destination de l'export">
+            <div class="exp-tete"><h2>Export : où l'écrire</h2><button type="button" class="petit carre bulle-droite" id="nouveau-dossier" aria-label="Créer un nouveau dossier"></button></div>
+            <form class="exp-chemin" id="nouveau-dossier-saisie" hidden>
+              <input id="nouveau-dossier-nom" aria-label="Nom du nouveau dossier" spellcheck="false" maxlength="100">
+              <button type="submit" class="petit">Créer</button>
+              <button type="button" class="petit" id="nouveau-dossier-annuler">Annuler</button>
+            </form>
+            <div class="exp-chemin"><input id="chemin-exp" aria-label="Dossier de destination" spellcheck="false"><button type="button" class="petit" id="parcourir-exp" title="Choisir un dossier">…</button></div>
+            <div class="raccourcis" id="raccourcis-exp"></div>
+            <div class="liste" id="liste-exp"></div>
+            <div class="exp-pied">
+              <p id="verdict" role="status"></p>
+              <div class="genres" id="genres" role="group" aria-label="Forme de l'export">
+                <button type="button" data-genre="fiches" title="Une fiche .md par pièce, et un tableau .csv">Fiches</button>
+                <button type="button" data-genre="odt" title="Un seul document LibreOffice Writer (.odt)">Document</button>
+                <button type="button" data-genre="ods" title="Un seul tableau LibreOffice Calc (.ods)">Tableau</button>
+              </div>
+              <button type="button" class="bouton" id="exporter">Exporter ici <span class="compte" id="exporter-compte">0</span></button>
+              <p id="etat-export" role="status"></p>
+            </div>
+          </section>
+        </div>
+      </div>
+      <nav class="menu-volet" aria-label="Ce que montre le volet">
+        <button type="button" id="onglet-src" data-volet="src" aria-pressed="true"><span class="nom">Pièces</span></button>
+        <button type="button" id="onglet-exp" data-volet="exp" aria-pressed="false"><span class="nom">Export</span> <span class="compte zero" id="onglet-compte">0</span></button>
+        <button type="button" class="petit" id="replier" aria-expanded="true" aria-label="Replier le volet" title="Replier le volet">«</button>
+      </nav>
+    </aside>
+
+    <section class="panneau" id="lecteur" aria-label="Lecteur de pièces">
+      <header class="tete"><h1 id="titre">Aucune pièce ouverte</h1><p id="sous-titre">Ouvrez un PDF depuis l'explorateur.</p></header>
+      <div class="barre">
+        <div class="regards" id="regards" role="group" aria-label="Ce qu'on regarde"></div>
+        <div class="outils" id="outils" hidden>
+          <label>page <input id="saisie-page" type="number" inputmode="numeric" min="1" value="1" aria-label="Aller à la page"></label>
+          <span id="sur-combien"></span>
+          <button type="button" id="zoom-moins" aria-label="Réduire">−</button>
+          <button type="button" id="zoom-largeur">Largeur</button>
+          <button type="button" id="zoom-plus" aria-label="Agrandir">+</button>
+          <button type="button" class="carre bulle-droite" id="pivoter" aria-label="Faire pivoter l'affichage"></button>
+        </div>
+      </div>
+      <p class="phrase" id="phrase" role="status" hidden></p>
+      <div class="sous-barre" id="sous-barre" hidden></div>
+      <div class="zone">
+        <div class="doc" id="doc" tabindex="0">
+          <div class="carte" id="carte"><h2 id="carte-titre">Aucune pièce ouverte</h2><p id="carte-texte">Choisissez un dossier dans l'explorateur, puis cliquez un PDF.</p></div>
+          <div class="pages" id="pages" data-pivot="0" hidden></div>
+          <div class="fiche feuillet" id="fiche" hidden></div>
+        </div>
+        <div class="marques" id="marques"></div>
+      </div>
+      <div class="pied" id="pied" hidden>
+        <p class="bas" id="bas" role="status" tabindex="0"></p>
+        <div class="pied-gestes">
+          <button type="button" class="petit" id="bas-taille" hidden>Tout lire</button>
+          <button type="button" class="petit carre bulle-haut" id="bas-fermer" aria-label="Masquer le détail" hidden></button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<!--PONT-->
+<script>
+(function () {
+"use strict";
+/*SCRIPT*/
+}());
+</script>
+<!--APRES-->
+</body>
+</html>
